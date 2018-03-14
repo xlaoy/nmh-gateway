@@ -1,0 +1,62 @@
+server:
+  port: 9910
+  tomcat:
+    uri-encoding: UTF-8
+
+spring:
+  http:
+    encoding:
+      charset: UTF-8
+      force: true
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://discovery:123456@127.0.0.1:9920/eureka/,http://discovery:123456@127.0.0.1:9930/eureka/
+  instance:
+    prefer-ip-address: true
+
+
+# 熔断 HystrixCommandProperties  配置类 监控 http://m.blog.csdn.net/u012702547/article/details/78224483
+hystrix:
+  command:
+    default:
+      execution:
+        timeout:
+          enabled: true
+        isolation:
+          thread:
+            timeoutInMilliseconds: 10000 #断路器的超时时间,断路器的超时时间需要大于ribbon的超时时间，不然不会触发重试。
+
+# 均衡负载  DefaultClientConfigImpl  配置类
+ribbon:
+  ConnectTimeout: 250 #ribbon请求连接的超时时间
+  ReadTimeout: 6000 #请求处理的超时时间
+  OkToRetryOnAllOperations: true #对所有操作请求都进行重试
+  MaxAutoRetries: 1 #对当前实例的重试次数
+  MaxAutoRetriesNextServer: 1 #对下个实例的重试次数
+
+zuul:
+  #sensitive-headers: #敏感头设置为空
+  #ignore-security-headers: false
+  routes:
+    api-trade:
+      path: /api-trade/**
+      service-id: xlaoy-server
+      retryable: true
+    api-user:
+      path: /api-user/**
+      service-id: xlaoy-server
+      retryable: true
+
+
+apibasicauth:
+  services:
+    xlaoy-server:
+      username: xlaoy
+      password: 123456
+
+jwt:
+  jwtheader: jwttoken
+  secret: wocao
+  expiredMinute: 30
