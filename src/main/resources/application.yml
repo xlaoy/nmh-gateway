@@ -41,7 +41,6 @@ zuul:
       service-id: xlaoy-server
       retryable: true
 
-
 apibasicauth:
   services:
     xlaoy-server:
