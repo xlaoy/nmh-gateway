@@ -9,14 +9,6 @@ spring:
       charset: UTF-8
       force: true
 
-eureka:
-  client:
-    service-url:
-      defaultZone: http://discovery:123456@127.0.0.1:9920/eureka/,http://discovery:123456@127.0.0.1:9930/eureka/
-  instance:
-    prefer-ip-address: true
-
-
 # 熔断 HystrixCommandProperties  配置类 监控 http://m.blog.csdn.net/u012702547/article/details/78224483
 hystrix:
   command:
