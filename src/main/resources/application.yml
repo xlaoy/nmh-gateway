@@ -29,8 +29,6 @@ ribbon:
   MaxAutoRetriesNextServer: 1 #对下个实例的重试次数
 
 zuul:
-  #sensitive-headers: #敏感头设置为空
-  #ignore-security-headers: false
   routes:
     api-trade:
       path: /api-trade/**
