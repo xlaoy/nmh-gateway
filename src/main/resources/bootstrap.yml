@@ -1,17 +1,17 @@
 spring:
   application:
     name: nmh-gateway
-#  cloud:
-#    config:
-#      label: master
-#      name: xlaoy
-#      profile: dev
-#      username: config
-#      password: 123456
-#      discovery:
-#        enabled: true
-#        service-id: config
-#      fail-fast: true
+  cloud:
+    config:
+      label: master
+      name: xlaoy
+      profile: dev
+      username: config
+      password: 123456
+      discovery:
+        enabled: true
+        service-id: config
+      fail-fast: true
 
 eureka:
   client:
