@@ -49,3 +49,10 @@ jwt:
   jwtheader: jwttoken
   secret: wocao
   expiredMinute: 30
+
+#打开actuator的所有端点
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
