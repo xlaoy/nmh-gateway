@@ -21,8 +21,6 @@ import org.springframework.web.filter.CorsFilter;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    private CorsFilter corsFilter;
-    @Autowired
     private JwtTokenFilter jwtTokenFilter;
     @Autowired
     private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
@@ -35,7 +33,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable()
             .httpBasic().disable()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-            .addFilterBefore(corsFilter, CorsFilter.class)
             .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
             .authorizeRequests()
             .antMatchers("/api-trade/**").hasRole("SHOP")
