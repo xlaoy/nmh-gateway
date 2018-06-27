@@ -4,6 +4,7 @@ import com.xlaoy.nmhgateway.filter.JwtTokenFilter;
 import com.xlaoy.nmhgateway.support.ApiAccessDeniedHandler;
 import com.xlaoy.nmhgateway.support.JwtAuthenticationEntryPoint;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -35,8 +36,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
             .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
             .authorizeRequests()
-            .antMatchers("/api-trade/**").hasRole("SHOP")
-            .antMatchers("/api-user/**").hasRole("SHOP")
+            .antMatchers(HttpMethod.OPTIONS).permitAll()
+            //.antMatchers("/api-trade/**").hasRole("SHOP")
+            //.antMatchers("/api-user/**").hasRole("SHOP")
+            .antMatchers("/**").permitAll()
             .and()
             .exceptionHandling()
             .authenticationEntryPoint(jwtAuthenticationEntryPoint)

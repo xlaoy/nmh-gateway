@@ -22,13 +22,19 @@ hystrix:
 
 # 均衡负载  DefaultClientConfigImpl  配置类
 ribbon:
-  ConnectTimeout: 250 #ribbon请求连接的超时时间
+  ConnectTimeout: 25 #ribbon请求连接的超时时间
   ReadTimeout: 6000 #请求处理的超时时间
   OkToRetryOnAllOperations: true #对所有操作请求都进行重试
   MaxAutoRetries: 1 #对当前实例的重试次数
   MaxAutoRetriesNextServer: 1 #对下个实例的重试次数
 
 zuul:
+  #请求转发给服务的时候忽略头信息
+  ignored-headers: jwttoken
+  #设置请求转发能够添加头信息
+  add-host-header: true
+  #设置敏感信息头为空
+  sensitive-headers: Cookie,Set-Cookie
   routes:
     api-trade:
       path: /api-trade/**
@@ -46,7 +52,6 @@ apibasicauth:
       password: 123456
 
 jwt:
-  jwtheader: jwttoken
   secret: wocao
   expiredMinute: 30
 

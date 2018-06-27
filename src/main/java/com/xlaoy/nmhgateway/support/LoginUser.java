@@ -12,7 +12,7 @@ public class LoginUser implements UserDetails {
 
     private String guid;
 
-    private Collection authorities;
+    private Collection<? extends GrantedAuthority> authorities;
 
     public String getGuid() {
         return guid;

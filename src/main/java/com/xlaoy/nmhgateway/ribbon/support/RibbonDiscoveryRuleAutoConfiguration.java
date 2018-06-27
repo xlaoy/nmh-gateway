@@ -33,15 +33,15 @@ import org.springframework.context.annotation.Scope;
  *
  * @author Jakub Narloch
  */
-@Configuration
-@ConditionalOnClass(DiscoveryEnabledNIWSServerList.class)
-@AutoConfigureBefore(RibbonClientConfiguration.class)
-@ConditionalOnProperty(value = "ribbon.filter.metadata.enabled", matchIfMissing = true)
+//@Configuration
+//@ConditionalOnClass(DiscoveryEnabledNIWSServerList.class)
+//@AutoConfigureBefore(RibbonClientConfiguration.class)
+//@ConditionalOnProperty(value = "ribbon.filter.metadata.enabled", matchIfMissing = true)
 public class RibbonDiscoveryRuleAutoConfiguration {
 
-    @Bean
-    @ConditionalOnMissingBean
-    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    //@Bean
+    //@ConditionalOnMissingBean
+    //@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public DiscoveryEnabledRule metadataAwareRule() {
         return new MetadataAwareRule();
     }
