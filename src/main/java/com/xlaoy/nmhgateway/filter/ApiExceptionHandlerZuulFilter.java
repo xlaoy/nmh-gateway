@@ -43,18 +43,13 @@ public class ApiExceptionHandlerZuulFilter extends ZuulFilter {
 
         RequestContext context = RequestContext.getCurrentContext();
 
-        HttpServletResponse response = context.getResponse();
-
-        logger.info("getResponseBody=" + context.getResponseBody());
-
-        if(HttpStatus.FORBIDDEN.value() == response.getStatus()
-                || HttpStatus.UNAUTHORIZED.value() == response.getStatus()) {
-            try {
-                response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-                response.flushBuffer();
-            } catch (Exception e) {
-                logger.error("ApiExceptionHandlerZuulFilter异常", e);
-            }
+        if(HttpStatus.FORBIDDEN.value() == context.getResponseStatusCode()
+                || HttpStatus.UNAUTHORIZED.value() == context.getResponseStatusCode()) {
+            context.setResponseStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            ExceptionResponse exceptionResponse = new ExceptionResponse();
+            exceptionResponse.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            exceptionResponse.setMessage("内部系统认证失败");
+            context.setResponseBody(JSONUtil.toJsonString(exceptionResponse));
         }
 
         return null;
