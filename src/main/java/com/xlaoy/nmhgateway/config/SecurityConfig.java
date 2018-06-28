@@ -5,20 +5,17 @@ import com.xlaoy.nmhgateway.support.ApiAccessDeniedHandler;
 import com.xlaoy.nmhgateway.support.JwtAuthenticationEntryPoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.filter.CorsFilter;
 
 /**
  * Created by xlaoy on 2016/11/3.
  */
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
@@ -36,9 +33,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
             .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
             .authorizeRequests()
-            .antMatchers(HttpMethod.OPTIONS).permitAll()
             //.antMatchers("/api-trade/**").hasRole("SHOP")
             //.antMatchers("/api-user/**").hasRole("SHOP")
+            //.anyRequest().authenticated()
             .antMatchers("/**").permitAll()
             .and()
             .exceptionHandling()
@@ -48,11 +45,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers(
+        web.ignoring()
+            .antMatchers(HttpMethod.OPTIONS)
+            .antMatchers(
                 "/actuator/**",
                 "/error",
                 "/favicon.ico"
-        );
+            );
     }
 
 }

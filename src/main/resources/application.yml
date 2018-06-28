@@ -34,7 +34,7 @@ zuul:
   #设置请求转发能够添加头信息
   add-host-header: true
   #设置敏感信息头为空
-  sensitive-headers: Cookie,Set-Cookie
+  sensitive-headers: Cookie,Set-Cookie,jwttoken
   routes:
     api-trade:
       path: /api-trade/**
@@ -49,7 +49,7 @@ apibasicauth:
   services:
     xlaoy-server:
       username: xlaoy
-      password: 123456
+      password: 1234567
 
 jwt:
   secret: wocao

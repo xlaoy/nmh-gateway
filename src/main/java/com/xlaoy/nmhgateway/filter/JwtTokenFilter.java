@@ -12,6 +12,7 @@ import com.xlaoy.common.config.SSOConstants;
 import com.xlaoy.nmhgateway.support.JwtAuthenticationToken;
 import com.xlaoy.nmhgateway.support.LoginUser;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +37,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
 
-        //setSecurityUser(request);
+        setSecurityUser(request);
 
         chain.doFilter(request, response);
     }
@@ -67,7 +68,11 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(jwtAuthenticationToken);
             }
         } catch (Exception e) {
-            logger.error("设置SecurityUser异常", e);
+            if(e instanceof ExpiredJwtException) {
+                logger.error("设置SecurityUser异常>{}", e.getMessage());
+            } else {
+                logger.error("设置SecurityUser异常", e);
+            }
         }
     }
 }

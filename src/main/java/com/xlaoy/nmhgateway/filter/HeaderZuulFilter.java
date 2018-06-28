@@ -25,7 +25,7 @@ import java.util.Base64;
  */
 @Component
 @EnableConfigurationProperties(ApiBasicAuthProperties.class)
-public class HeaderFilter extends ZuulFilter {
+public class HeaderZuulFilter extends ZuulFilter {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
