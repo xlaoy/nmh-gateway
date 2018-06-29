@@ -45,13 +45,13 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     private void setSecurityUser(HttpServletRequest request) {
         try {
             String token = request.getHeader(SSOConstants.JWT_TOKEN);
-            logger.info("用户信息jwttoken={}", token);
-            if(!StringUtils.isEmpty(token)) {
+            logger.info("请求头信息：jwttoken={}", token);
+            if(!StringUtils.isEmpty(token) && !"null".equals(token)) {
                 Claims claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
                 String guid = claims.get("guid", String.class);
                 String roles = claims.get("roles", String.class);
 
-                logger.info("用户信息guid={},roles={}", guid, roles);
+                logger.info("用户信息：guid={},roles={}", guid, roles);
 
                 Collection<GrantedAuthority> authorities = new ArrayList<>();
                 String[] rolesArray = roles.split(",");
@@ -69,7 +69,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             }
         } catch (Exception e) {
             if(e instanceof ExpiredJwtException) {
-                logger.error("设置SecurityUser异常>{}", e.getMessage());
+                logger.error("设置SecurityUser异常：{}", e.getMessage());
             } else {
                 logger.error("设置SecurityUser异常", e);
             }

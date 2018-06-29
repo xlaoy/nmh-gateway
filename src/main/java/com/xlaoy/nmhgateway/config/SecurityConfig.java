@@ -1,5 +1,6 @@
 package com.xlaoy.nmhgateway.config;
 
+import com.xlaoy.nmhgateway.filter.ApiSecurityInterceptorFilter;
 import com.xlaoy.nmhgateway.filter.JwtTokenFilter;
 import com.xlaoy.nmhgateway.support.ApiAccessDeniedHandler;
 import com.xlaoy.nmhgateway.support.JwtAuthenticationEntryPoint;
@@ -10,6 +11,7 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
@@ -24,6 +26,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     @Autowired
     private ApiAccessDeniedHandler apiAccessDeniedHandler;
+    @Autowired
+    private ApiSecurityInterceptorFilter apiSecurityInterceptorFilter;
 
 
     @Override
@@ -32,11 +36,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .httpBasic().disable()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
             .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(apiSecurityInterceptorFilter, FilterSecurityInterceptor.class)
             .authorizeRequests()
-            //.antMatchers("/api-trade/**").hasRole("SHOP")
-            //.antMatchers("/api-user/**").hasRole("SHOP")
-            //.anyRequest().authenticated()
-            .antMatchers("/**").permitAll()
+            .anyRequest().authenticated()
             .and()
             .exceptionHandling()
             .authenticationEntryPoint(jwtAuthenticationEntryPoint)

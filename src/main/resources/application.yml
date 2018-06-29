@@ -49,7 +49,7 @@ apibasicauth:
   services:
     xlaoy-server:
       username: xlaoy
-      password: 1234567
+      password: 123456
 
 jwt:
   secret: wocao

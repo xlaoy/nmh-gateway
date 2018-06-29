@@ -1,4 +1,4 @@
-package com.xlaoy.nmhgateway.support;
+package com.xlaoy.nmhgateway.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

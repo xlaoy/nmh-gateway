@@ -2,9 +2,8 @@ package com.xlaoy.nmhgateway.filter;
 
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
-import com.xlaoy.common.config.SSOConstants;
 import com.xlaoy.common.utils.JSONUtil;
-import com.xlaoy.nmhgateway.support.ApiBasicAuthProperties;
+import com.xlaoy.nmhgateway.config.ApiBasicAuthProperties;
 import com.xlaoy.nmhgateway.support.LoginUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,9 +13,7 @@ import org.springframework.cloud.netflix.zuul.filters.support.FilterConstants;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
-import javax.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 

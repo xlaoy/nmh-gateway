@@ -30,6 +30,6 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint, Se
 
         JsonResponseWriter.response(response)
                 .status(HttpStatus.UNAUTHORIZED)
-                .message("用户权限不足").print();
+                .message("用户未登录").print();
     }
 }
