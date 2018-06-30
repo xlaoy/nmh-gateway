@@ -9,6 +9,7 @@ spring:
       charset: UTF-8
       force: true
 
+
 # 熔断 HystrixCommandProperties  配置类 监控 http://m.blog.csdn.net/u012702547/article/details/78224483
 hystrix:
   command:
