@@ -1,9 +1,16 @@
 package com.xlaoy.nmhgateway.support;
 
+import com.xlaoy.common.exception.BizException;
+import com.xlaoy.nmhgateway.provider.impl.DatabaseConfigAttributeProvider;
+import com.xlaoy.nmhgateway.provider.impl.InMemoryConfigAttributeProvider;
+import com.xlaoy.nmhgateway.provider.impl.MongoConfigAttributeProvider;
+import com.xlaoy.nmhgateway.provider.impl.RedisConfigAttributeProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.security.access.ConfigAttribute;
-import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
 import org.springframework.stereotype.Component;
@@ -15,12 +22,25 @@ import java.util.*;
 /**
  * Created by Administrator on 2018/6/29 0029.
  */
+@RefreshScope //刷新providerType
 @Component
 public class ApiInvocationSecurityMetadataSource implements FilterInvocationSecurityMetadataSource {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private AntPathMatcher pathMatcher = new AntPathMatcher();
+
+    @Value("${gitrep.configattribute.providertype:inmemory}")
+    private String providerType;
+
+    @Autowired
+    private InMemoryConfigAttributeProvider inMemoryConfigAttributeProvider;
+    @Autowired
+    private DatabaseConfigAttributeProvider databaseConfigAttributeProvider;
+    @Autowired
+    private RedisConfigAttributeProvider redisConfigAttributeProvider;
+    @Autowired
+    private MongoConfigAttributeProvider mongoConfigAttributeProvider;
 
     /**
      * 此方法是为了判定用户请求的url 是否在权限表中，
@@ -56,17 +76,19 @@ public class ApiInvocationSecurityMetadataSource implements FilterInvocationSecu
      */
     private Map<String, Collection<ConfigAttribute>> getConfigAttributeMap() {
         Map<String, Collection<ConfigAttribute>> map = new HashMap<>();
-
-        Set<ConfigAttribute> set = new HashSet<>();
-        set.add(new SecurityConfig("ROLE_ORDINARY_SHOP"));
-
-        map.put("/api-trade/**", set);
-        map.put("/api-user/**", set);
-
-        Set<ConfigAttribute> set1 = new HashSet<>();
-        set1.add(new SecurityConfig("ROLE_NONE"));
-        map.put("/api-user/user/test01", set1);
-
+        if("inmemory".equals(providerType)) {
+            map = inMemoryConfigAttributeProvider.getConfigAttributeMap();
+        } else if("database".equals(providerType)) {
+            map = databaseConfigAttributeProvider.getConfigAttributeMap();
+        } else if("redis".equals(providerType)) {
+            map = redisConfigAttributeProvider.getConfigAttributeMap();
+        } else if("mongo".equals(providerType)) {
+            map = mongoConfigAttributeProvider.getConfigAttributeMap();
+        } else {
+            logger.error("gitrep.configattribute.providertype的值只能为[" +
+                    "inmemory,database,redis,mongo]中的一个");
+            throw new BizException("ConfigAttributeProvider配置类型错误！");
+        }
         return map;
     }
 
