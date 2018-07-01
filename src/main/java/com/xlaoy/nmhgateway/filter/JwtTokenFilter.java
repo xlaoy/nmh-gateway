@@ -71,11 +71,11 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         logger.info("请求头信息：jwttoken={}", token);
         if(!StringUtils.isEmpty(token) && !"null".equals(token)) {
             Claims claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
-            String guid = claims.get("guid", String.class);
+            String guid = claims.get(SSOConstants.GUID, String.class);
             //
             this.checkUser(guid);
 
-            String roles = claims.get("roles", String.class);
+            String roles = claims.get(SSOConstants.ROLES, String.class);
 
             logger.info("用户信息：guid={},roles={}", guid, roles);
 
