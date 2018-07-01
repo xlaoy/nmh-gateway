@@ -26,7 +26,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint, Se
                          HttpServletResponse response,
                          AuthenticationException authException) throws IOException {
 
-        logger.error("用户未登录,url:{}", request.getRequestURI());
+        logger.error("用户未登录,url={}", request.getRequestURI());
 
         JsonResponseWriter.response(response)
                 .status(HttpStatus.UNAUTHORIZED)

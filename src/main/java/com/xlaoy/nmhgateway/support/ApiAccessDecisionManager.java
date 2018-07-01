@@ -32,7 +32,15 @@ public class ApiAccessDecisionManager implements AccessDecisionManager {
         while (iterator.hasNext()) {
             ConfigAttribute attribute = iterator.next();
             String role = attribute.getAttribute();
+            //表示放行的权限
+            if("ROLE_NONE".equals(role)) {
+                return;
+            }
             for(GrantedAuthority authority : authentication.getAuthorities()) {
+                //超级管理员
+                if("ROLE_SUPER_ADMIN".equals(authority.getAuthority())) {
+                    return;
+                }
                 if(role.equals(authority.getAuthority())) {
                     return;
                 }

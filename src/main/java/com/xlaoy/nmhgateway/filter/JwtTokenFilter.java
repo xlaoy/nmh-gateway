@@ -41,7 +41,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
-        int next = 0;
+        Exception exception = null;
         try {
             setSecurityUser(request);
         } catch (Exception e) {
@@ -50,19 +50,14 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             } else {
                 logger.error("设置SecurityUser异常", e);
             }
-            if(e instanceof UserNotFoundException
-               || e instanceof UserDisableException) {
-                next = 1;
-            }
-            if(e instanceof UserChangeException) {
-                next = 2;
-            }
+            exception = e;
         }
-        if(next == 1) {
+        if(exception instanceof UserNotFoundException
+                || exception instanceof UserDisableException) {
             JsonResponseWriter.response(response)
                     .status(HttpStatus.BAD_REQUEST)
                     .message("用户异常").print();
-        } else if(next == 2) {
+        } else if(exception instanceof UserChangeException) {
             JsonResponseWriter.response(response)
                     .status(HttpStatus.UNAUTHORIZED)
                     .message("用户需要重新登陆").print();
@@ -110,6 +105,6 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     private void checkUser(String guid) {
         //throw new UserNotFoundException("用户没查到");
         //throw new UserDisableException("用户已禁用");
-        throw new UserChangeException("用户信息有变化，需要重新登陆");
+        //throw new UserChangeException("用户信息有变化，需要重新登陆");
     }
 }

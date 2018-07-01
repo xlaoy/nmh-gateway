@@ -27,7 +27,7 @@ public class ApiAccessDeniedHandler implements AccessDeniedHandler {
                        HttpServletResponse response,
                        AccessDeniedException accessDeniedException) throws IOException, ServletException {
 
-        logger.error("用户权限不足,url:{}", request.getRequestURI());
+        logger.error("用户权限不足,url={}", request.getRequestURI());
 
         JsonResponseWriter.response(response)
                 .status(HttpStatus.FORBIDDEN)

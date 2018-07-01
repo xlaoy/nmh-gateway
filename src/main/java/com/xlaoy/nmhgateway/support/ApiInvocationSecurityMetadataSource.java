@@ -34,19 +34,20 @@ public class ApiInvocationSecurityMetadataSource implements FilterInvocationSecu
     public Collection<ConfigAttribute> getAttributes(Object o) throws IllegalArgumentException {
         FilterInvocation invocation = (FilterInvocation)o;
         String url = invocation.getHttpRequest().getRequestURI();
+        Collection<ConfigAttribute> attributeSet = new HashSet<>();
         Map<String, Collection<ConfigAttribute>> map = this.getConfigAttributeMap();
         if(!CollectionUtils.isEmpty(map)) {
             Iterator<String> iterator = map.keySet().iterator();
             while (iterator.hasNext()) {
                 String resource = iterator.next();
                 if(pathMatcher.match(resource, url)) {
-                    return map.get(resource);
+                    attributeSet.addAll((HashSet)map.get(resource));
                 }
             }
         } else {
             logger.warn("系统资源权限集合为空！");
         }
-        return null;
+        return attributeSet;
     }
 
     /**
@@ -57,10 +58,14 @@ public class ApiInvocationSecurityMetadataSource implements FilterInvocationSecu
         Map<String, Collection<ConfigAttribute>> map = new HashMap<>();
 
         Set<ConfigAttribute> set = new HashSet<>();
-        set.add(new SecurityConfig("ROLE_ORDINARY_USER"));
+        set.add(new SecurityConfig("ROLE_ORDINARY_SHOP"));
 
         map.put("/api-trade/**", set);
         map.put("/api-user/**", set);
+
+        Set<ConfigAttribute> set1 = new HashSet<>();
+        set1.add(new SecurityConfig("ROLE_NONE"));
+        map.put("/api-user/user/test01", set1);
 
         return map;
     }
