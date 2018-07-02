@@ -69,7 +69,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     private void setSecurityUser(HttpServletRequest request) {
         String token = request.getHeader(SSOConstants.JWT_TOKEN);
         logger.info("请求头信息：jwttoken={}", token);
-        if(!StringUtils.isEmpty(token) && !"null".equals(token)) {
+        if(!StringUtils.isEmpty(token) && !"null".equals(token) && !"undefined".equals(token)) {
             Claims claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
             String guid = claims.get(SSOConstants.GUID, String.class);
             //
@@ -80,10 +80,12 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             logger.info("用户信息：guid={},roles={}", guid, roles);
 
             Collection<GrantedAuthority> authorities = new ArrayList<>();
-            String[] rolesArray = roles.split(",");
-            for(String role : rolesArray) {
-                SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role);
-                authorities.add(authority);
+            if(!StringUtils.isEmpty(roles)) {
+                String[] rolesArray = roles.split(",");
+                for(String role : rolesArray) {
+                    SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role);
+                    authorities.add(authority);
+                }
             }
 
             LoginUser loginUser = new LoginUser();

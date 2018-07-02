@@ -24,6 +24,7 @@ public class ApiAccessDecisionManager implements AccessDecisionManager {
 
     @Override
     public void decide(Authentication authentication, Object o, Collection<ConfigAttribute> collection) throws AccessDeniedException, InsufficientAuthenticationException {
+        logger.info("鉴权了卧槽");
         //如果请求的资源没有找到权限则放行，表示该资源为公共资源，都可以访问
         if(CollectionUtils.isEmpty(collection)) {
             return;

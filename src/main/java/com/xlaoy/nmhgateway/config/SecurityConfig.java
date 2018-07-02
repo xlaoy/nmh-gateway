@@ -1,8 +1,9 @@
 package com.xlaoy.nmhgateway.config;
 
-import com.xlaoy.nmhgateway.filter.ApiSecurityInterceptorFilter;
 import com.xlaoy.nmhgateway.filter.JwtTokenFilter;
+import com.xlaoy.nmhgateway.support.ApiAccessDecisionManager;
 import com.xlaoy.nmhgateway.support.ApiAccessDeniedHandler;
+import com.xlaoy.nmhgateway.support.ApiInvocationSecurityMetadataSource;
 import com.xlaoy.nmhgateway.support.JwtAuthenticationEntryPoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
@@ -27,8 +28,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private ApiAccessDeniedHandler apiAccessDeniedHandler;
     @Autowired
-    private ApiSecurityInterceptorFilter apiSecurityInterceptorFilter;
+    private ApiInvocationSecurityMetadataSource apiInvocationSecurityMetadataSource;
+    @Autowired
+    private ApiAccessDecisionManager apiAccessDecisionManager;
 
+    @Override
+    public void init(WebSecurity web) throws Exception {
+        final HttpSecurity http = this.getHttp();
+        web.addSecurityFilterChainBuilder(http).postBuildAction(new Runnable() {
+            public void run() {
+                FilterSecurityInterceptor securityInterceptor = (FilterSecurityInterceptor)http.getSharedObject(FilterSecurityInterceptor.class);
+                securityInterceptor.setSecurityMetadataSource(apiInvocationSecurityMetadataSource);
+                securityInterceptor.setAccessDecisionManager(apiAccessDecisionManager);
+                web.securityInterceptor(securityInterceptor);
+            }
+        });
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -36,7 +51,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .httpBasic().disable()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
             .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
-            .addFilterBefore(apiSecurityInterceptorFilter, FilterSecurityInterceptor.class)
             .authorizeRequests()
             .anyRequest().authenticated()
             .and()
