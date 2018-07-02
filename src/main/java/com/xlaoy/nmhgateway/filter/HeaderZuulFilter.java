@@ -2,6 +2,7 @@ package com.xlaoy.nmhgateway.filter;
 
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
+import com.xlaoy.common.config.SSOConstants;
 import com.xlaoy.common.utils.JSONUtil;
 import com.xlaoy.nmhgateway.config.ApiBasicAuthProperties;
 import com.xlaoy.nmhgateway.support.LoginUser;
@@ -53,7 +54,7 @@ public class HeaderZuulFilter extends ZuulFilter {
             Object object = authentication.getDetails();
             if(object instanceof LoginUser) {
                 LoginUser loginUser = (LoginUser)object;
-                context.addZuulRequestHeader("guid", loginUser.getGuid());
+                context.addZuulRequestHeader(SSOConstants.GUID, loginUser.getGuid());
             }
         }
 

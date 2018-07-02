@@ -1,7 +1,10 @@
 package com.xlaoy.nmhgateway.config;
 
+import com.xlaoy.nmhgateway.filter.GatewayExceptionHandlerFilter;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -12,7 +15,17 @@ import org.springframework.web.servlet.config.annotation.CorsRegistration;
  * Created by Administrator on 2018/3/1 0001.
  */
 @Configuration
-public class CorsFilterConfig {
+public class WebFilterConfig {
+
+    @Bean
+    public FilterRegistrationBean gatewayExceptionHandlerFilter() {
+        FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
+        filterRegistrationBean.setOrder(Ordered.HIGHEST_PRECEDENCE);
+        filterRegistrationBean.setFilter(new GatewayExceptionHandlerFilter());
+        filterRegistrationBean.setName("gatewayExceptionHandlerFilter");
+        filterRegistrationBean.addUrlPatterns("/*");
+        return filterRegistrationBean;
+    }
 
     @Bean
     public CorsFilter corsFilter() {
