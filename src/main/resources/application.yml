@@ -18,8 +18,7 @@ hystrix:
         timeout:
           enabled: true
         isolation:
-          thread:
-            timeoutInMilliseconds: 100000 #断路器的超时时间,断路器的超时时间需要大于ribbon的超时时间，不然不会触发重试。
+          strategy: SEMAPHORE
 
 # 均衡负载  DefaultClientConfigImpl  配置类
 ribbon:
