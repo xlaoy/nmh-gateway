@@ -59,7 +59,7 @@ public class HeaderZuulFilter extends ZuulFilter {
         }
 
         String serviceId = (String)context.get("serviceId");
-        ApiBasicAuthProperties.BasicAuthInfo basicAuthInfo = basicAuthProperties.getServices().get(serviceId);
+        ApiBasicAuthProperties.BasicAuthInfo basicAuthInfo = basicAuthProperties.getService(serviceId);
         String authToken = this.getAuthToken(basicAuthInfo);
 
         context.addZuulRequestHeader("Authorization", "Basic " + authToken);

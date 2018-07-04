@@ -46,7 +46,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             setSecurityUser(request);
         } catch (Exception e) {
             if(e instanceof ExpiredJwtException) {
-                logger.error("设置SecurityUser异常：{}", e.getMessage());
+                logger.warn("jwttoken过期：{}", e.getMessage());
             } else {
                 logger.error("设置SecurityUser异常", e);
             }

@@ -30,7 +30,7 @@ public class ExceptionHandlerZuulFilter extends ZuulFilter {
 
     @Override
     public int filterOrder() {
-        return 1;
+        return 2000;
     }
 
     @Override
