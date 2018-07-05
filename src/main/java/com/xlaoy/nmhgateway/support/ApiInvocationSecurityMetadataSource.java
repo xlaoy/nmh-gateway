@@ -1,6 +1,7 @@
 package com.xlaoy.nmhgateway.support;
 
 import com.xlaoy.common.exception.BizException;
+import com.xlaoy.nmhgateway.config.RefreshValue;
 import com.xlaoy.nmhgateway.provider.impl.DatabaseConfigAttributeProvider;
 import com.xlaoy.nmhgateway.provider.impl.InMemoryConfigAttributeProvider;
 import com.xlaoy.nmhgateway.provider.impl.MongoConfigAttributeProvider;
@@ -22,16 +23,12 @@ import java.util.*;
 /**
  * Created by Administrator on 2018/6/29 0029.
  */
-@RefreshScope //刷新providerType
 @Component
 public class ApiInvocationSecurityMetadataSource implements FilterInvocationSecurityMetadataSource {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private AntPathMatcher pathMatcher = new AntPathMatcher();
-
-    @Value("${gitrep.configattribute.providertype:inmemory}")
-    private String providerType;
 
     @Autowired
     private InMemoryConfigAttributeProvider inMemoryConfigAttributeProvider;
@@ -41,6 +38,8 @@ public class ApiInvocationSecurityMetadataSource implements FilterInvocationSecu
     private RedisConfigAttributeProvider redisConfigAttributeProvider;
     @Autowired
     private MongoConfigAttributeProvider mongoConfigAttributeProvider;
+    @Autowired
+    private RefreshValue refreshValue;
 
     /**
      * 此方法是为了判定用户请求的url 是否在权限表中，
@@ -76,6 +75,7 @@ public class ApiInvocationSecurityMetadataSource implements FilterInvocationSecu
      */
     private Map<String, Collection<ConfigAttribute>> getConfigAttributeMap() {
         Map<String, Collection<ConfigAttribute>> map = new HashMap<>();
+        String providerType = refreshValue.getProviderType();
         if("inmemory".equals(providerType)) {
             map = inMemoryConfigAttributeProvider.getConfigAttributeMap();
         } else if("database".equals(providerType)) {
