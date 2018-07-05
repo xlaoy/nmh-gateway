@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServletResponse;
 import com.xlaoy.common.config.SSOConstants;
 import com.xlaoy.common.support.JsonResponseWriter;
 import com.xlaoy.nmhgateway.exception.UserChangeException;
-import com.xlaoy.nmhgateway.exception.UserDisableException;
 import com.xlaoy.nmhgateway.exception.UserNotFoundException;
 import com.xlaoy.nmhgateway.support.JwtAuthenticationToken;
 import com.xlaoy.nmhgateway.support.LoginUser;
@@ -20,11 +19,15 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetailsChecker;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -36,6 +39,8 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
     @Value("${jwt.secret}")
     private String secret;
+    @Autowired
+    private UserDetailsChecker userChecker;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
@@ -51,7 +56,8 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             exception = e;
         }
         if(exception instanceof UserNotFoundException
-                || exception instanceof UserDisableException) {
+                || exception instanceof DisabledException
+                || exception instanceof LockedException) {
             JsonResponseWriter.response(response)
                     .status(HttpStatus.BAD_REQUEST)
                     .message("用户异常").print();
@@ -70,8 +76,11 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         if(!StringUtils.isEmpty(token) && !"null".equals(token) && !"undefined".equals(token)) {
             Claims claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
             String guid = claims.get(SSOConstants.GUID, String.class);
+
+            LoginUser loginUser = new LoginUser();
+            loginUser.setGuid(guid);
             //
-            this.checkUser(guid);
+            userChecker.check(loginUser);
 
             String roles = claims.get(SSOConstants.ROLES, String.class);
 
@@ -85,26 +94,12 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                     authorities.add(authority);
                 }
             }
-
-            LoginUser loginUser = new LoginUser();
-            loginUser.setGuid(guid);
             loginUser.setAuthorities(authorities);
+            //
             JwtAuthenticationToken jwtAuthenticationToken = new JwtAuthenticationToken(guid, "xlaoy-user", authorities);
             jwtAuthenticationToken.setDetails(loginUser);
             SecurityContextHolder.getContext().setAuthentication(jwtAuthenticationToken);
         }
     }
 
-    /**
-     * 在redis里面查找用户，查看：
-     * 是否存在
-     * 是否被禁用
-     * 是否需要重新登陆
-     * @param guid
-     */
-    private void checkUser(String guid) {
-        //throw new UserNotFoundException("用户没查到");
-        //throw new UserDisableException("用户已禁用");
-        //throw new UserChangeException("用户信息有变化，需要重新登陆");
-    }
 }

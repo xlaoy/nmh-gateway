@@ -1,14 +1,17 @@
 package com.xlaoy.nmhgateway.exception;
 
+import org.springframework.security.authentication.AccountStatusException;
+
 /**
  * Created by Administrator on 2018/6/30 0030.
  */
-public class UserNotFoundException extends RuntimeException {
+public class UserNotFoundException extends AccountStatusException {
 
-    public UserNotFoundException() {
+    public UserNotFoundException(String msg) {
+        super(msg);
     }
 
-    public UserNotFoundException(String message) {
-        super(message);
+    public UserNotFoundException(String msg, Throwable t) {
+        super(msg, t);
     }
 }
