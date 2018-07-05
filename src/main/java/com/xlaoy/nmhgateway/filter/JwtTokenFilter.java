@@ -36,8 +36,6 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
     @Value("${jwt.secret}")
     private String secret;
-    @Value("${jwt.expiredMinute}")
-    private Integer expiredMinute;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {

@@ -19,7 +19,7 @@ import java.io.PrintWriter;
  * Created by Administrator on 2018/6/28 0028.
  */
 @Component
-public class ExceptionHandlerZuulFilter extends ZuulFilter {
+public class ApiExceptionHandlerZuulFilter extends ZuulFilter {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -30,35 +30,24 @@ public class ExceptionHandlerZuulFilter extends ZuulFilter {
 
     @Override
     public int filterOrder() {
-        return 2000;
+        return 2;
     }
 
     @Override
     public boolean shouldFilter() {
-        return true;
+        RequestContext context = RequestContext.getCurrentContext();
+        return context.getThrowable() == null && (HttpStatus.FORBIDDEN.value() == context.getResponseStatusCode()
+                || HttpStatus.UNAUTHORIZED.value() == context.getResponseStatusCode());
     }
 
     @Override
     public Object run() throws ZuulException {
-
         RequestContext context = RequestContext.getCurrentContext();
-
-        if(HttpStatus.FORBIDDEN.value() == context.getResponseStatusCode()
-                || HttpStatus.UNAUTHORIZED.value() == context.getResponseStatusCode()) {
-            context.setResponseStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            ExceptionResponse exceptionResponse = new ExceptionResponse();
-            exceptionResponse.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            exceptionResponse.setMessage("内部系统认证失败");
-            context.setResponseBody(JSONUtil.toJsonString(exceptionResponse));
-        }
-
-        /*if(HttpStatus.INTERNAL_SERVER_ERROR.value() == context.getResponseStatusCode()) {
-            ExceptionResponse exceptionResponse = new ExceptionResponse();
-            exceptionResponse.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            exceptionResponse.setMessage("系统异常");
-            context.setResponseBody(JSONUtil.toJsonString(exceptionResponse));
-        }*/
-
+        context.setResponseStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        ExceptionResponse exceptionResponse = new ExceptionResponse();
+        exceptionResponse.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        exceptionResponse.setMessage("内部系统认证失败");
+        context.setResponseBody(JSONUtil.toJsonString(exceptionResponse));
         return null;
     }
 }
