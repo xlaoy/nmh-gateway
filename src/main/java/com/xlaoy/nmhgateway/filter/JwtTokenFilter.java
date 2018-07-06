@@ -8,7 +8,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.xlaoy.common.config.SSOConstants;
+import com.xlaoy.common.constants.SSOConstants;
 import com.xlaoy.common.support.JsonResponseWriter;
 import com.xlaoy.nmhgateway.exception.UserChangeException;
 import com.xlaoy.nmhgateway.exception.UserNotFoundException;

@@ -3,7 +3,7 @@ package com.xlaoy.nmhgateway.filter;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 import com.xlaoy.common.config.ApiBasicAuthProperties;
-import com.xlaoy.common.config.SSOConstants;
+import com.xlaoy.common.constants.SSOConstants;
 import com.xlaoy.common.utils.JSONUtil;
 import com.xlaoy.nmhgateway.support.LoginUser;
 import org.slf4j.Logger;
