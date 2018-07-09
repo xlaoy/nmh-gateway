@@ -3,7 +3,7 @@ spring:
     name: nmh-gateway
   cloud:
     config:
-      uri: http://127.0.0.1:9940
+      uri: http://127.0.0.1:9940/config
       username: config
       password: 123456
       label: master
