@@ -2,6 +2,7 @@ package com.xlaoy.nmhgateway.support;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDecisionManager;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.ConfigAttribute;
@@ -21,6 +22,9 @@ import java.util.Iterator;
 public class ApiAccessDecisionManager implements AccessDecisionManager {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    @Autowired
+    private ApiAccessDecisionVoter apiAccessDecisionVoter;
 
     @Override
     public void decide(Authentication authentication, Object o, Collection<ConfigAttribute> collection) throws AccessDeniedException, InsufficientAuthenticationException {
