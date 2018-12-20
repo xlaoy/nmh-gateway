@@ -1,5 +1,5 @@
 server:
-  port: 9910
+  port: 5020
   tomcat:
     uri-encoding: UTF-8
 
@@ -8,6 +8,10 @@ spring:
     encoding:
       charset: UTF-8
       force: true
+  kafka:
+    bootstrap-servers: ["192.168.1.181:9092", "192.168.1.181:9093"]
+    producer:
+      retries: 1
 
 
 # 熔断 HystrixCommandProperties  配置类 监控 http://m.blog.csdn.net/u012702547/article/details/78224483
