@@ -23,9 +23,9 @@ public class InMemoryConfigAttributeProvider implements ConfigAttributeProvider 
         map.put("/api-trade/**", set);
         map.put("/api-user/**", set);
 
-        /*Set<ConfigAttribute> set1 = new HashSet<>();
+        Set<ConfigAttribute> set1 = new HashSet<>();
         set1.add(new SecurityConfig("ROLE_NONE"));
-        map.put("/api-user/user/test01", set1);*/
+        map.put("/api-user/user/test01", set1);
 
         return map;
     }

@@ -9,7 +9,7 @@ import lombok.Data;
 @Data
 public class RequestURLMessage {
 
-    private String guid = "none";
+    private String guid;
 
     private String url;
 

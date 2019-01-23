@@ -63,8 +63,9 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         Exception exception = null;
+        String guid = "none";
         try {
-            setSecurityUser(request);
+            guid = setSecurityUser(request);
         } catch (Exception e) {
             if(e instanceof ExpiredJwtException) {
                 logger.warn("jwttoken过期：{}", e.getMessage());
@@ -73,6 +74,12 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             }
             exception = e;
         }
+
+        RequestURLMessage kafkaMessage = new RequestURLMessage(request.getRequestURI());
+        kafkaMessage.setTime(LocalDateTime.now().format(DateTimeFormatter.ofPattern(Java8TimeUtil.YYYY_MM_DD_HH_MM_SS)));
+        kafkaMessage.setGuid(guid);
+        this.sendMessage(kafkaMessage);
+
         if(exception instanceof UserNotFoundException
                 || exception instanceof DisabledException
                 || exception instanceof LockedException) {
@@ -88,18 +95,16 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         }
     }
 
-    private void setSecurityUser(HttpServletRequest request) {
+    private String setSecurityUser(HttpServletRequest request) {
         String token = request.getHeader(SSOConstants.JWT_TOKEN);
         logger.info("请求头信息：jwttoken={}", token);
-        RequestURLMessage kafkaMessage = new RequestURLMessage(request.getRequestURI());
-        kafkaMessage.setTime(LocalDateTime.now().format(DateTimeFormatter.ofPattern(Java8TimeUtil.YYYY_MM_DD_HH_MM_SS)));
+        String guid = null;
         if(!StringUtils.isEmpty(token) && !"null".equals(token) && !"undefined".equals(token)) {
             Claims claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
-            String guid = claims.get(SSOConstants.GUID, String.class);
+            guid = claims.get(SSOConstants.GUID, String.class);
 
             LoginUser loginUser = new LoginUser();
             loginUser.setGuid(guid);
-            kafkaMessage.setGuid(guid);
             //
             userChecker.check(loginUser);
             //
@@ -110,13 +115,13 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             jwtAuthenticationToken.setDetails(loginUser);
             SecurityContextHolder.getContext().setAuthentication(jwtAuthenticationToken);
         }
-        this.sendMessage(kafkaMessage);
+        return guid;
     }
 
     private void sendMessage(RequestURLMessage kafkaMessage) {
         try {
             ListenableFuture<SendResult<String, String>> listenableFuture = kafkaTemplate.send(KafkaTopic.REQUEST_URL,
-                    this.getPartitioner(kafkaMessage.getUrl()),
+                    //this.getPartitioner(kafkaMessage.getUrl()),
                     kafkaMessage.getGuid(),
                     JSONUtil.toJsonString(kafkaMessage));
 
